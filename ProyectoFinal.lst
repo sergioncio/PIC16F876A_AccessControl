@@ -1,0 +1,1710 @@
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001                 LIST P=16F876A
+                      00002                 include "p16f876a.inc"
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ;  MPASM PIC16F876A processor include
+                      00005 ; 
+                      00006 ;  (c) Copyright 1999-2011 Microchip Technology, All rights reserved
+                      00007 ;==========================================================================
+                      00008 
+                      00513         LIST
+2007   3F79           00003                 __CONFIG _XT_OSC & _WDT_OFF & _LVP_OFF
+                      00004 
+                      00005 ;Contraseña Usuario 1: 1 2 3 4
+                      00006 ;Contraseña Usuario 2: A B C D
+                      00007 ;Contraseña Usuario 3: 6 7 8 9
+                      00008 
+  00000020            00009 columna                 EQU 0x20
+  00000021            00010 n_columna               EQU     0x21
+  00000022            00011 tecla                   EQU 0x22
+  00000023            00012 valor_RB                EQU     0x23
+  00000024            00013 n_fila                  EQU     0x24
+  00000025            00014 Activado                EQU     0x25
+  00000026            00015 Desactivado             EQU     0x26
+  00000027            00016 Detectado               EQU     0x27
+  00000028            00017 Disparado               EQU     0x28
+  00000029            00018 Cont_10s                EQU     0x29
+  0000002A            00019 Cont_15s                EQU     0x2A
+  0000002B            00020 Valor_IN                EQU     0x2B
+  0000002C            00021 Dato_Recibido   EQU     0x2C
+  0000002D            00022 Valor_c                 EQU     0x2D
+  0000002E            00023 Valor_s                 EQU     0x2E
+  0000002F            00024 Valor_0                 EQU     0x2F
+  00000030            00025 Valor_1                 EQU     0x30
+  00000031            00026 Valor_R                 EQU     0x31
+  00000032            00027 Valor_S                 EQU     0x32
+  00000033            00028 Tecla_Pulsada   EQU     0x33
+  00000034            00029 Dato0                   EQU     0x34
+  00000035            00030 Dato1                   EQU     0x35
+  00000036            00031 Dato2                   EQU     0x36
+  00000037            00032 Dato3                   EQU     0x37
+  00000038            00033 Usuario_Valido  EQU     0x38
+                      00034 
+0000                  00035                 ORG     0
+0000   2805           00036                 goto    inicio
+0004                  00037                 ORG     4
+0004   2847           00038                 goto    ISR
+0005                  00039                 ORG     5
+                      00040 
+0005                  00041 inicio
+0005   3063           00042                 MOVLW   'c'
+0006   00AD           00043                 MOVWF   Valor_c
+                      00044 
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0007   3073           00045                 MOVLW   's'
+0008   00AE           00046                 MOVWF   Valor_s
+                      00047 
+0009   3030           00048                 MOVLW   '0'
+000A   00AF           00049                 MOVWF   Valor_0
+                      00050 
+000B   3031           00051                 MOVLW   '1'
+000C   00B0           00052                 MOVWF   Valor_1
+                      00053 
+000D   3052           00054                 MOVLW   'R'
+000E   00B1           00055                 MOVWF   Valor_R
+                      00056 
+000F   3053           00057                 MOVLW   'S'
+0010   00B2           00058                 MOVWF   Valor_S
+                      00059 
+0011   01A4           00060                 CLRF    n_fila
+0012   01A0           00061                 CLRF    columna
+0013   3004           00062                 MOVLW   .4
+0014   00A3           00063                 MOVWF   valor_RB
+                      00064 
+0015   1403           00065                 BSF             STATUS, 0
+0016   1683           00066                 BSF             STATUS,RP0
+                      00067                 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0017   141F           00068                 BSF     ADCON1, PCFG0
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0018   149F           00069                 BSF     ADCON1, PCFG1
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0019   151F           00070                 BSF     ADCON1, PCFG2   
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+001A   1005           00071                 BCF             TRISA,RA0
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+001B   1085           00072                 BCF             TRISA,RA1
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+001C   1105           00073                 BCF             TRISA,RA2                       
+                      00074                 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+001D   1406           00075                 BSF             TRISB,RB0       
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+001E   1086           00076                 BCF             TRISB,RB1
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+001F   1106           00077                 BCF             TRISB,RB2
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0020   1186           00078                 BCF             TRISB,RB3
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0021   1606           00079                 BSF             TRISB,RB4                       
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0022   1686           00080                 BSF             TRISB,RB5
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0023   1706           00081                 BSF             TRISB,RB6
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0024   1786           00082                 BSF             TRISB,RB7                                       
+                      00083                         
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0025   0187           00084                 CLRF    TRISC
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0026   1787           00085                 BSF             TRISC,RC7
+                      00086                 
+0027   178B           00087                 BSF     INTCON, GIE
+0028   170B           00088                 BSF     INTCON, PEIE
+0029   160B           00089                 BSF             INTCON, INTE
+002A   158B           00090                 BSF             INTCON, RBIE
+002B   128B           00091                 BCF             INTCON, T0IE
+                      00092 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+002C   1281           00093                 BCF             OPTION_REG,T0CS         ;Temporizador
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+002D   1181           00094                 BCF             OPTION_REG,PSA          ;Prescaler al módulo Timer0
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+002E   1501           00095                 BSF             OPTION_REG,PS2
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+002F   1481           00096                 BSF             OPTION_REG,PS1
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0030   1401           00097                 BSF             OPTION_REG,PS0          ;1:256
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0031   1701           00098                 BSF             OPTION_REG,INTEDG       ;Interrupción RB0 por flanco ASCENDENTE
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0032   1381           00099                 BCF     OPTION_REG,7            ;Habilitar Pull-Up
+                      00100 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0033   168C           00101                 BSF             PIE1,RCIE
+                      00102 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0034   1218           00103                 BCF             TXSTA,SYNC
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0035   1318           00104                 BCF             TXSTA,TX9
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0036   1518           00105                 BSF             TXSTA,BRGH
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0037   1698           00106                 BSF             TXSTA,TXEN
+0038   3019           00107                 MOVLW   .25
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0039   0099           00108                 MOVWF   SPBRG
+                      00109                         
+003A   1283           00110                 BCF             STATUS,RP0
+                      00111 
+003B   1318           00112                 BCF             RCSTA,RX9
+003C   1798           00113                 BSF             RCSTA,SPEN
+003D   1618           00114                 BSF             RCSTA,CREN
+                      00115 
+003E   1425           00116                 BSF             Activado,0      
+003F   1026           00117                 BCF             Desactivado,0
+0040   1028           00118                 BCF             Disparado,0
+0041   1027           00119                 BCF             Detectado,0
+                      00120 
+0042   1005           00121                 BCF             PORTA,RA0
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0043   1485           00122                 BSF             PORTA,RA1
+0044   1105           00123                 BCF             PORTA,RA2
+                      00124 
+0045   0187           00125                 CLRF    PORTC   
+                      00126                 
+0046                  00127 main
+0046   2846           00128                 GOTO    main
+                      00129 
+0047                  00130 ISR             
+0047   1A8C           00131                 BTFSC   PIR1,RCIF
+0048   2A97           00132                 GOTO    Recepcion_USART
+                      00133 
+0049   188B           00134                 BTFSC   INTCON,INTF
+004A   2AD2           00135                 GOTO    Interrupcion_RB0
+                      00136 
+004B   190B           00137                 BTFSC   INTCON,T0IF
+004C   2874           00138                 GOTO    esperar_15s
+                      00139                 
+004D   1E06           00140                 BTFSS   PORTB,RB4
+004E   2856           00141                 GOTO    Rutina
+004F   1E86           00142                 BTFSS   PORTB,RB5
+0050   2856           00143                 GOTO    Rutina
+0051   1F06           00144                 BTFSS   PORTB,RB6
+0052   2856           00145                 GOTO    Rutina
+0053   1F86           00146                 BTFSS   PORTB,RB7
+0054   2856           00147                 GOTO    Rutina
+0055   285B           00148                 GOTO    Salir_Interrupcion
+                      00149 
+0056                  00150 Rutina
+0056   208A           00151         CALL    retardo_30ms
+0057   110B           00152         BCF     INTCON,T0IF
+                      00153 
+0058   180B           00154         BTFSC   INTCON,RBIF
+0059   285D           00155         GOTO    Interrupcion_RBIF
+005A   285B           00156         GOTO    Salir_Interrupcion
+                      00157 
+005B                  00158 Salir_Interrupcion
+005B   100B           00159         BCF        INTCON,RBIF
+005C   0009           00160         RETFIE
+                      00161 
+005D                  00162 Interrupcion_RBIF
+005D   1E06           00163                 BTFSS   PORTB,RB4
+005E   3000           00164                 MOVLW   .0
+005F   1E86           00165                 BTFSS   PORTB,RB5
+0060   3001           00166                 MOVLW   .1
+0061   1F06           00167                 BTFSS   PORTB,RB6
+0062   3002           00168                 MOVLW   .2
+0063   1F86           00169                 BTFSS   PORTB,RB7
+0064   3003           00170                 MOVLW   .3
+0065   00A0           00171                 MOVWF   columna
+0066   0103           00172                 CLRW
+0067   0720           00173                 ADDWF   columna,0
+0068   00A1           00174                 MOVWF   n_columna
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00175                 
+0069   2094           00176                 CALL    identificar_tecla
+                      00177                 
+006A   3000           00178                 MOVLW   .0
+006B   0233           00179                 SUBWF   Tecla_Pulsada,0
+006C   1D03           00180                 BTFSS   STATUS,Z                        ;¿tecla_pulsada = 0?
+006D   2936           00181                 GOTO    Comprobar_NDato
+006E   285B           00182                 GOTO    Salir_Interrupcion
+                      00183 
+                      00184 ;RETARDO 15 SEGUNDOS
+006F                  00185 Retardo_15s     
+006F   168B           00186                 BSF             INTCON, T0IE    
+0070   30E7           00187                 MOVLW   .231
+0071   00AA           00188                 MOVWF   Cont_15s
+                      00189 
+0072                  00190 bucle_15s
+0072   3002           00191                 MOVLW   .2              ;65ms   
+0073   0081           00192                 MOVWF   TMR0
+                      00193 
+0074                  00194 esperar_15s
+0074   1D0B           00195                 BTFSS   INTCON, T0IF
+0075   0009           00196                 RETFIE
+                      00197                 
+0076   110B           00198                 BCF             INTCON,T0IF
+Message[305]: Using default destination of 1 (file).
+0077   0BAA           00199                 DECFSZ  Cont_15s
+0078   2872           00200                 GOTO    bucle_15s
+0079   128B           00201                 BCF             INTCON, T0IE
+007A   1827           00202                 BTFSC   Detectado,0
+007B   2A5A           00203                 GOTO    Estado_Disparado
+007C   0008           00204                 RETURN
+                      00205 
+                      00206 ;RETARDO 10 SEGUNDOS
+007D                  00207 Retardo_10s     
+007D   168B           00208                 BSF             INTCON, T0IE
+007E   01B8           00209                 CLRF    Usuario_Valido  
+007F   309A           00210                 MOVLW   .154
+0080   00A9           00211                 MOVWF   Cont_10s
+                      00212 
+0081                  00213 bucle_10s
+0081   3002           00214                 MOVLW   .2              ;65ms   
+0082   0081           00215                 MOVWF   TMR0
+                      00216 
+0083                  00217 esperar_10s
+0083   1D0B           00218                 BTFSS   INTCON, T0IF
+0084   2883           00219                 GOTO    esperar_10s
+                      00220                 
+0085   110B           00221                 BCF             INTCON,T0IF
+Message[305]: Using default destination of 1 (file).
+0086   0BA9           00222                 DECFSZ  Cont_10s
+0087   2881           00223                 GOTO    bucle_10s
+0088   128B           00224                 BCF             INTCON, T0IE
+0089   2A24           00225                 GOTO    Estado_Activado
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00226 
+                      00227 ;RETARDO 30 MS
+008A                  00228 retardo_30ms
+008A   168B           00229                 BSF             INTCON, T0IE
+008B   308B           00230                 MOVLW   .139
+008C   0081           00231                 MOVWF   TMR0
+                      00232 
+008D                  00233 esperar_30ms
+008D   1D0B           00234                 BTFSS   INTCON, T0IF
+008E   288D           00235                 GOTO    esperar_30ms
+008F   1C27           00236                 BTFSS   Detectado,0
+0090   128B           00237                 BCF             INTCON, T0IE
+0091   0008           00238                 RETURN  
+                      00239 
+0092                  00240 incrementar_columna
+Message[305]: Using default destination of 1 (file).
+0092   0AA3           00241                 INCF    valor_RB
+0093   2896           00242                 GOTO    continuar
+                      00243 
+                      00244 ;Rutina identificar tecla
+0094                  00245 identificar_tecla
+0094   300E           00246                 MOVLW   b'1110'
+0095   0087           00247                 MOVWF   PORTC
+                      00248 
+0096                  00249 continuar               
+0096   0103           00250                 CLRW
+0097   0221           00251                 SUBWF   n_columna,0
+0098   1903           00252                 BTFSC   STATUS,Z
+0099   28A3           00253                 GOTO    Comprobar_columna0
+009A   3001           00254                 MOVLW   .1
+009B   0221           00255                 SUBWF   n_columna,0
+009C   1903           00256                 BTFSC   STATUS,Z
+009D   28A8           00257                 GOTO    Comprobar_columna1
+009E   3002           00258                 MOVLW   .2
+009F   0221           00259                 SUBWF   n_columna,0
+00A0   1903           00260                 BTFSC   STATUS,Z
+00A1   28AD           00261                 GOTO    Comprobar_columna2
+00A2   28B2           00262                 GOTO    Comprobar_columna3
+                      00263         
+00A3                  00264 Comprobar_columna0
+00A3   3000           00265                 MOVLW   .0
+00A4   00A1           00266                 MOVWF   n_columna
+00A5   1A06           00267                 BTFSC   PORTB,RB4               
+00A6   28B7           00268                 GOTO    tecla_NOpulsada         
+00A7   28BC           00269                 GOTO    tecla_PULSADA
+                      00270 
+00A8                  00271 Comprobar_columna1
+00A8   3001           00272                 MOVLW   .1
+00A9   00A1           00273                 MOVWF   n_columna
+00AA   1A86           00274                 BTFSC   PORTB,RB5               
+00AB   28B7           00275                 GOTO    tecla_NOpulsada         
+00AC   28BC           00276                 GOTO    tecla_PULSADA
+                      00277 
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00AD                  00278 Comprobar_columna2
+00AD   3002           00279                 MOVLW   .2
+00AE   00A1           00280                 MOVWF   n_columna
+00AF   1B06           00281                 BTFSC   PORTB,RB6               
+00B0   28B7           00282                 GOTO    tecla_NOpulsada         
+00B1   28BC           00283                 GOTO    tecla_PULSADA
+                      00284 
+00B2                  00285 Comprobar_columna3
+00B2   3003           00286                 MOVLW   .3
+00B3   00A1           00287                 MOVWF   n_columna
+00B4   1B86           00288                 BTFSC   PORTB,RB7               
+00B5   28B7           00289                 GOTO    tecla_NOpulsada         
+00B6   28BC           00290                 GOTO    tecla_PULSADA
+                      00291 
+00B7                  00292 tecla_NOpulsada
+00B7   0AA4           00293                 INCF    n_fila,1
+00B8   1D87           00294                 BTFSS   PORTC, RB3
+00B9   292E           00295                 GOTO    ultima_fila
+                      00296                 
+00BA   0D87           00297                 RLF             PORTC, 1
+00BB   2896           00298                 GOTO    continuar
+                      00299 
+00BC                  00300 tecla_PULSADA
+00BC   0AB3           00301                 INCF    Tecla_Pulsada,1
+00BD   0103           00302                 CLRW
+00BE   0220           00303                 SUBWF   columna,0
+00BF   1903           00304                 BTFSC   STATUS,Z
+00C0   28CA           00305                 GOTO    columna0
+00C1   3001           00306                 MOVLW   .1
+00C2   0220           00307                 SUBWF   columna,0
+00C3   1903           00308                 BTFSC   STATUS,Z
+00C4   28D7           00309                 GOTO    columna1
+00C5   3002           00310                 MOVLW   .2
+00C6   0220           00311                 SUBWF   columna,0
+00C7   1903           00312                 BTFSC   STATUS,Z
+00C8   28E4           00313                 GOTO    columna2
+00C9   28F1           00314                 GOTO    columna3
+                      00315 
+00CA                  00316 columna0
+00CA   0103           00317                 CLRW
+00CB   0224           00318                 SUBWF   n_fila,0
+00CC   1903           00319                 BTFSC   STATUS,Z
+00CD   2901           00320                 GOTO    tecla_1
+00CE   3001           00321                 MOVLW   .1
+00CF   0224           00322                 SUBWF   n_fila,0
+00D0   1903           00323                 BTFSC   STATUS,Z
+00D1   290A           00324                 GOTO    tecla_4
+00D2   3002           00325                 MOVLW   .2
+00D3   0224           00326                 SUBWF   n_fila,0
+00D4   1903           00327                 BTFSC   STATUS,Z
+00D5   2913           00328                 GOTO    tecla_7
+00D6   2928           00329                 GOTO    tecla_ast
+                      00330 
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00D7                  00331 columna1
+00D7   0103           00332                 CLRW
+00D8   0224           00333                 SUBWF   n_fila,0
+00D9   1903           00334                 BTFSC   STATUS,Z
+00DA   2904           00335                 GOTO    tecla_2
+00DB   3001           00336                 MOVLW   .1
+00DC   0224           00337                 SUBWF   n_fila,0
+00DD   1903           00338                 BTFSC   STATUS,Z
+00DE   290D           00339                 GOTO    tecla_5
+00DF   3002           00340                 MOVLW   .2
+00E0   0224           00341                 SUBWF   n_fila,0
+00E1   1903           00342                 BTFSC   STATUS,Z
+00E2   2916           00343                 GOTO    tecla_8
+00E3   28FE           00344                 GOTO    tecla_0
+                      00345 
+00E4                  00346 columna2
+00E4   0103           00347                 CLRW
+00E5   0224           00348                 SUBWF   n_fila,0
+00E6   1903           00349                 BTFSC   STATUS,Z
+00E7   2907           00350                 GOTO    tecla_3
+00E8   3001           00351                 MOVLW   .1
+00E9   0224           00352                 SUBWF   n_fila,0
+00EA   1903           00353                 BTFSC   STATUS,Z
+00EB   2910           00354                 GOTO    tecla_6
+00EC   3002           00355                 MOVLW   .2
+00ED   0224           00356                 SUBWF   n_fila,0
+00EE   1903           00357                 BTFSC   STATUS,Z
+00EF   2919           00358                 GOTO    tecla_9
+00F0   292B           00359                 GOTO    tecla_alm
+                      00360 
+00F1                  00361 columna3
+00F1   0103           00362                 CLRW
+00F2   0224           00363                 SUBWF   n_fila,0
+00F3   1903           00364                 BTFSC   STATUS,Z
+00F4   291C           00365                 GOTO    tecla_A
+00F5   3001           00366                 MOVLW   .1
+00F6   0224           00367                 SUBWF   n_fila,0
+00F7   1903           00368                 BTFSC   STATUS,Z
+00F8   291F           00369                 GOTO    tecla_B
+00F9   3002           00370                 MOVLW   .2
+00FA   0224           00371                 SUBWF   n_fila,0
+00FB   1903           00372                 BTFSC   STATUS,Z
+00FC   2922           00373                 GOTO    tecla_C
+00FD   2925           00374                 GOTO    tecla_D
+                      00375 
+00FE                  00376 tecla_0
+00FE   3030           00377                 MOVLW   '0'
+00FF   00A2           00378                 MOVWF   tecla
+0100   2930           00379                 GOTO    Final
+                      00380 
+0101                  00381 tecla_1
+0101   3031           00382                 MOVLW   '1'
+0102   00A2           00383                 MOVWF   tecla
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0103   2930           00384                 GOTO    Final
+                      00385 
+0104                  00386 tecla_2
+0104   3032           00387                 MOVLW   '2'
+0105   00A2           00388                 MOVWF   tecla
+0106   2930           00389                 GOTO    Final
+                      00390 
+0107                  00391 tecla_3
+0107   3033           00392                 MOVLW   '3'
+0108   00A2           00393                 MOVWF   tecla
+0109   2930           00394                 GOTO    Final
+                      00395 
+010A                  00396 tecla_4
+010A   3034           00397                 MOVLW   '4'
+010B   00A2           00398                 MOVWF   tecla
+010C   2930           00399                 GOTO    Final
+                      00400 
+010D                  00401 tecla_5
+010D   3035           00402                 MOVLW   '5'
+010E   00A2           00403                 MOVWF   tecla
+010F   2930           00404                 GOTO    Final
+                      00405 
+0110                  00406 tecla_6
+0110   3036           00407                 MOVLW   '6'
+0111   00A2           00408                 MOVWF   tecla
+0112   2930           00409                 GOTO    Final
+                      00410 
+0113                  00411 tecla_7
+0113   3037           00412                 MOVLW   '7'
+0114   00A2           00413                 MOVWF   tecla
+0115   2930           00414                 GOTO    Final
+                      00415 
+0116                  00416 tecla_8
+0116   3038           00417                 MOVLW   '8'
+0117   00A2           00418                 MOVWF   tecla
+0118   2930           00419                 GOTO    Final
+                      00420 
+0119                  00421 tecla_9
+0119   3039           00422                 MOVLW   '9'
+011A   00A2           00423                 MOVWF   tecla
+011B   2930           00424                 GOTO    Final
+                      00425 
+011C                  00426 tecla_A
+011C   3041           00427                 MOVLW   'A'
+011D   00A2           00428                 MOVWF   tecla
+011E   2930           00429                 GOTO    Final
+                      00430 
+011F                  00431 tecla_B
+011F   3042           00432                 MOVLW   'B'
+0120   00A2           00433                 MOVWF   tecla
+0121   2930           00434                 GOTO    Final
+                      00435 
+0122                  00436 tecla_C
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0122   3043           00437                 MOVLW   'C'
+0123   00A2           00438                 MOVWF   tecla
+0124   2930           00439                 GOTO    Final
+                      00440 
+0125                  00441 tecla_D
+0125   3044           00442                 MOVLW   'D'
+0126   00A2           00443                 MOVWF   tecla
+0127   2930           00444                 GOTO    Final
+                      00445 
+0128                  00446 tecla_ast
+0128   302A           00447                 MOVLW   '*'
+0129   00A2           00448                 MOVWF   tecla
+012A   2930           00449                 GOTO    Final
+                      00450 
+012B                  00451 tecla_alm
+012B   3023           00452                 MOVLW   '#'
+012C   00A2           00453                 MOVWF   tecla
+012D   2930           00454                 GOTO    Final
+                      00455 
+012E                  00456 ultima_fila
+012E   30FF           00457                 MOVLW   0xFF
+                      00458                 ;MOVWF  tecla
+012F   2930           00459                 GOTO    Final
+                      00460 
+0130                  00461 Final                   
+0130   3000           00462                 MOVLW   b'0000'
+0131   0087           00463                 MOVWF   PORTC
+0132   3004           00464                 MOVLW   .4
+0133   00A3           00465                 MOVWF   valor_RB
+0134   01A4           00466                 CLRF    n_fila
+                      00467                 
+0135   0008           00468                 RETURN
+                      00469 
+0136                  00470 Comprobar_NDato
+0136   3001           00471                 MOVLW   .1
+0137   0233           00472                 SUBWF   Tecla_Pulsada,0
+0138   1903           00473                 BTFSC   STATUS,Z
+0139   2946           00474                 GOTO    Guardar_dato0
+                      00475                                         
+013A   3002           00476                 MOVLW   .2
+013B   0233           00477                 SUBWF   Tecla_Pulsada,0
+013C   1903           00478                 BTFSC   STATUS,Z
+013D   2949           00479                 GOTO    Guardar_dato1           
+                      00480                         
+013E   3003           00481                 MOVLW   .3
+013F   0233           00482                 SUBWF   Tecla_Pulsada,0
+0140   1903           00483                 BTFSC   STATUS,Z
+0141   294C           00484                 GOTO    Guardar_dato2   
+                      00485                         
+0142   3004           00486                 MOVLW   .4
+0143   0233           00487                 SUBWF   Tecla_Pulsada,0
+0144   1903           00488                 BTFSC   STATUS,Z
+0145   294F           00489                 GOTO    Guardar_dato3
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00490 
+0146                  00491 Guardar_dato0
+0146   0822           00492                 MOVFW   tecla
+0147   00B4           00493                 MOVWF   Dato0                   
+0148   285B           00494                 GOTO    Salir_Interrupcion
+                      00495 
+0149                  00496 Guardar_dato1
+0149   0822           00497                 MOVFW   tecla
+014A   00B5           00498                 MOVWF   Dato1                   
+014B   285B           00499                 GOTO    Salir_Interrupcion
+                      00500 
+014C                  00501 Guardar_dato2
+014C   0822           00502                 MOVFW   tecla
+014D   00B6           00503                 MOVWF   Dato2                   
+014E   285B           00504                 GOTO    Salir_Interrupcion
+                      00505 
+014F                  00506 Guardar_dato3
+014F   0822           00507                 MOVFW   tecla
+0150   00B7           00508                 MOVWF   Dato3                   
+0151   3000           00509                 MOVLW   .0
+0152   00B3           00510                 MOVWF   Tecla_Pulsada
+0153   2954           00511                 GOTO    Validar_Codigo
+                      00512 
+0154                  00513 Validar_Codigo
+0154   3031           00514                 MOVLW   '1'
+0155   0234           00515                 SUBWF   Dato0,0
+0156   1903           00516                 BTFSC   STATUS,Z
+0157   2960           00517                 GOTO    Comprobar_Usuario1
+                      00518                         
+0158   3041           00519                 MOVLW   'A'
+0159   0234           00520                 SUBWF   Dato0,0
+015A   1903           00521                 BTFSC   STATUS,Z
+015B   296D           00522                 GOTO    Comprobar_Usuario2
+                      00523                         
+015C   3036           00524                 MOVLW   '6'
+015D   0234           00525                 SUBWF   Dato0,0
+015E   1903           00526                 BTFSC   STATUS,Z
+015F   297A           00527                 GOTO    Comprobar_Usuario3
+                      00528 
+0160                  00529 Comprobar_Usuario1
+0160   3032           00530                 MOVLW   '2'
+0161   0235           00531                 SUBWF   Dato1,0
+0162   1D03           00532                 BTFSS   STATUS,Z
+0163   2987           00533                 GOTO    Codigo_NoValido
+                      00534                         
+0164   3033           00535                 MOVLW   '3'
+0165   0236           00536                 SUBWF   Dato2,0
+0166   1D03           00537                 BTFSS   STATUS,Z
+0167   2987           00538                 GOTO    Codigo_NoValido
+                      00539                         
+0168   3034           00540                 MOVLW   '4'
+0169   0237           00541                 SUBWF   Dato3,0
+016A   1D03           00542                 BTFSS   STATUS,Z
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+016B   2987           00543                 GOTO    Codigo_NoValido
+016C   29A9           00544                 GOTO    Codigo_Usuario1
+                      00545 
+016D                  00546 Comprobar_Usuario2
+016D   3042           00547                 MOVLW   'B'
+016E   0235           00548                 SUBWF   Dato1,0
+016F   1D03           00549                 BTFSS   STATUS,Z
+0170   2987           00550                 GOTO    Codigo_NoValido
+                      00551                         
+0171   3043           00552                 MOVLW   'C'
+0172   0236           00553                 SUBWF   Dato2,0
+0173   1D03           00554                 BTFSS   STATUS,Z
+0174   2987           00555                 GOTO    Codigo_NoValido
+                      00556                         
+0175   3044           00557                 MOVLW   'D'
+0176   0237           00558                 SUBWF   Dato3,0
+0177   1D03           00559                 BTFSS   STATUS,Z
+0178   2987           00560                 GOTO    Codigo_NoValido
+0179   29DB           00561                 GOTO    Codigo_Usuario2
+                      00562 
+017A                  00563 Comprobar_Usuario3
+017A   3037           00564                 MOVLW   '7'
+017B   0235           00565                 SUBWF   Dato1,0
+017C   1D03           00566                 BTFSS   STATUS,Z
+017D   2987           00567                 GOTO    Codigo_NoValido
+                      00568                         
+017E   3038           00569                 MOVLW   '8'
+017F   0236           00570                 SUBWF   Dato2,0
+0180   1D03           00571                 BTFSS   STATUS,Z
+0181   2987           00572                 GOTO    Codigo_NoValido
+                      00573                         
+0182   3039           00574                 MOVLW   '9'
+0183   0237           00575                 SUBWF   Dato3,0
+0184   1D03           00576                 BTFSS   STATUS,Z
+0185   2987           00577                 GOTO    Codigo_NoValido
+0186   29FE           00578                 GOTO    Codigo_Usuario3
+                      00579 
+0187                  00580 Codigo_NoValido
+0187   304E           00581                 MOVLW   'N'
+0188   0099           00582                 MOVWF   TXREG
+0189   2294           00583                 CALL    Esperar_tx
+                      00584 
+018A   304F           00585                 MOVLW   'O'
+018B   0099           00586                 MOVWF   TXREG
+018C   2294           00587                 CALL    Esperar_tx
+                      00588 
+018D   3020           00589                 MOVLW   ' '
+018E   0099           00590                 MOVWF   TXREG
+018F   2294           00591                 CALL    Esperar_tx
+                      00592 
+0190   3056           00593                 MOVLW   'V'
+0191   0099           00594                 MOVWF   TXREG
+0192   2294           00595                 CALL    Esperar_tx
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00596 
+0193   30C1           00597                 MOVLW   'Á'
+0194   0099           00598                 MOVWF   TXREG
+0195   2294           00599                 CALL    Esperar_tx
+                      00600 
+0196   304C           00601                 MOVLW   'L'
+0197   0099           00602                 MOVWF   TXREG
+0198   2294           00603                 CALL    Esperar_tx
+                      00604 
+0199   3049           00605                 MOVLW   'I'
+019A   0099           00606                 MOVWF   TXREG
+019B   2294           00607                 CALL    Esperar_tx
+                      00608 
+019C   3044           00609                 MOVLW   'D'
+019D   0099           00610                 MOVWF   TXREG
+019E   2294           00611                 CALL    Esperar_tx
+                      00612 
+019F   304F           00613                 MOVLW   'O'
+01A0   0099           00614                 MOVWF   TXREG
+01A1   2294           00615                 CALL    Esperar_tx
+                      00616 
+01A2   300A           00617                 MOVLW   .10
+01A3   0099           00618                 MOVWF   TXREG
+01A4   2294           00619                 CALL    Esperar_tx
+                      00620 
+01A5   300D           00621                 MOVLW   .13
+01A6   0099           00622                 MOVWF   TXREG
+01A7   2294           00623                 CALL    Esperar_tx
+01A8   285B           00624                 GOTO    Salir_Interrupcion
+                      00625 
+01A9                  00626 Codigo_Usuario1
+01A9   3001           00627                 MOVLW   .1
+01AA   00B8           00628                 MOVWF   Usuario_Valido
+                      00629 
+01AB   3046           00630                 MOVLW   'F'
+01AC   0099           00631                 MOVWF   TXREG
+01AD   2294           00632                 CALL    Esperar_tx
+                      00633 
+01AE   304C           00634                 MOVLW   'L'
+01AF   0099           00635                 MOVWF   TXREG
+01B0   2294           00636                 CALL    Esperar_tx
+                      00637 
+01B1   304F           00638                 MOVLW   'O'
+01B2   0099           00639                 MOVWF   TXREG
+01B3   2294           00640                 CALL    Esperar_tx
+                      00641 
+01B4   3052           00642                 MOVLW   'R'
+01B5   0099           00643                 MOVWF   TXREG
+01B6   2294           00644                 CALL    Esperar_tx
+                      00645 
+01B7   3045           00646                 MOVLW   'E'
+01B8   0099           00647                 MOVWF   TXREG
+01B9   2294           00648                 CALL    Esperar_tx
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00649 
+01BA   304E           00650                 MOVLW   'N'
+01BB   0099           00651                 MOVWF   TXREG
+01BC   2294           00652                 CALL    Esperar_tx
+                      00653 
+01BD   3054           00654                 MOVLW   'T'
+01BE   0099           00655                 MOVWF   TXREG
+01BF   2294           00656                 CALL    Esperar_tx
+                      00657 
+01C0   3049           00658                 MOVLW   'I'
+01C1   0099           00659                 MOVWF   TXREG
+01C2   2294           00660                 CALL    Esperar_tx
+                      00661 
+01C3   304E           00662                 MOVLW   'N'
+01C4   0099           00663                 MOVWF   TXREG
+01C5   2294           00664                 CALL    Esperar_tx
+                      00665 
+01C6   304F           00666                 MOVLW   'O'
+01C7   0099           00667                 MOVWF   TXREG
+01C8   2294           00668                 CALL    Esperar_tx
+                      00669 
+01C9   300A           00670                 MOVLW   .10
+01CA   0099           00671                 MOVWF   TXREG
+01CB   2294           00672                 CALL    Esperar_tx
+                      00673 
+01CC   300D           00674                 MOVLW   .13
+01CD   0099           00675                 MOVWF   TXREG
+01CE   2294           00676                 CALL    Esperar_tx
+                      00677 
+01CF   1827           00678                 BTFSC   Detectado,0
+01D0   01B8           00679                 CLRF    Usuario_Valido
+                      00680 
+01D1   1827           00681                 BTFSC   Detectado,0
+01D2   2A77           00682                 GOTO    Estado_Desactivado
+                      00683 
+01D3   1825           00684                 BTFSC   Activado,0
+01D4   01B8           00685                 CLRF    Usuario_Valido
+                      00686 
+01D5   1825           00687                 BTFSC   Activado,0
+01D6   2A77           00688                 GOTO    Estado_Desactivado
+                      00689 
+01D7   1826           00690                 BTFSC   Desactivado,0
+01D8   2A77           00691                 GOTO    Estado_Desactivado
+                      00692         
+01D9   01B8           00693                 CLRF    Usuario_Valido
+                      00694 
+01DA   285B           00695                 GOTO    Salir_Interrupcion
+                      00696 
+01DB                  00697 Codigo_Usuario2
+01DB   3001           00698                 MOVLW   .1
+01DC   00B8           00699                 MOVWF   Usuario_Valido
+                      00700 
+01DD   3050           00701                 MOVLW   'P'
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE 15
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+01DE   0099           00702                 MOVWF   TXREG
+01DF   2294           00703                 CALL    Esperar_tx
+                      00704 
+01E0   3045           00705                 MOVLW   'E'
+01E1   0099           00706                 MOVWF   TXREG
+01E2   2294           00707                 CALL    Esperar_tx
+                      00708 
+01E3   3052           00709                 MOVLW   'R'
+01E4   0099           00710                 MOVWF   TXREG
+01E5   2294           00711                 CALL    Esperar_tx
+                      00712 
+01E6   3045           00713                 MOVLW   'E'
+01E7   0099           00714                 MOVWF   TXREG
+01E8   2294           00715                 CALL    Esperar_tx
+                      00716 
+01E9   305A           00717                 MOVLW   'Z'
+01EA   0099           00718                 MOVWF   TXREG
+01EB   2294           00719                 CALL    Esperar_tx
+                      00720 
+01EC   300A           00721                 MOVLW   .10
+01ED   0099           00722                 MOVWF   TXREG
+01EE   2294           00723                 CALL    Esperar_tx
+                      00724 
+01EF   300D           00725                 MOVLW   .13
+01F0   0099           00726                 MOVWF   TXREG
+01F1   2294           00727                 CALL    Esperar_tx
+                      00728 
+01F2   1827           00729                 BTFSC   Detectado,0
+01F3   01B8           00730                 CLRF    Usuario_Valido
+                      00731 
+01F4   1827           00732                 BTFSC   Detectado,0
+01F5   2A77           00733                 GOTO    Estado_Desactivado
+                      00734 
+01F6   1825           00735                 BTFSC   Activado,0
+01F7   01B8           00736                 CLRF    Usuario_Valido
+                      00737 
+01F8   1825           00738                 BTFSC   Activado,0
+01F9   2A77           00739                 GOTO    Estado_Desactivado
+                      00740 
+01FA   1826           00741                 BTFSC   Desactivado,0
+01FB   2A77           00742                 GOTO    Estado_Desactivado
+                      00743         
+01FC   01B8           00744                 CLRF    Usuario_Valido
+                      00745 
+01FD   285B           00746                 GOTO    Salir_Interrupcion
+                      00747 
+01FE                  00748 Codigo_Usuario3
+01FE   3001           00749                 MOVLW   .1
+01FF   00B8           00750                 MOVWF   Usuario_Valido
+                      00751 
+0200   305A           00752                 MOVLW   'Z'
+0201   0099           00753                 MOVWF   TXREG
+0202   2294           00754                 CALL    Esperar_tx
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE 16
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00755 
+0203   3049           00756                 MOVLW   'I'
+0204   0099           00757                 MOVWF   TXREG
+0205   2294           00758                 CALL    Esperar_tx
+                      00759 
+0206   3044           00760                 MOVLW   'D'
+0207   0099           00761                 MOVWF   TXREG
+0208   2294           00762                 CALL    Esperar_tx
+                      00763 
+0209   3041           00764                 MOVLW   'A'
+020A   0099           00765                 MOVWF   TXREG
+020B   2294           00766                 CALL    Esperar_tx
+                      00767 
+020C   304E           00768                 MOVLW   'N'
+020D   0099           00769                 MOVWF   TXREG
+020E   2294           00770                 CALL    Esperar_tx
+                      00771 
+020F   3045           00772                 MOVLW   'E'
+0210   0099           00773                 MOVWF   TXREG
+0211   2294           00774                 CALL    Esperar_tx
+                      00775 
+0212   300A           00776                 MOVLW   .10
+0213   0099           00777                 MOVWF   TXREG
+0214   2294           00778                 CALL    Esperar_tx
+                      00779 
+0215   300D           00780                 MOVLW   .13
+0216   0099           00781                 MOVWF   TXREG
+0217   2294           00782                 CALL    Esperar_tx
+                      00783 
+0218   1827           00784                 BTFSC   Detectado,0
+0219   01B8           00785                 CLRF    Usuario_Valido
+                      00786 
+021A   1827           00787                 BTFSC   Detectado,0
+021B   2A77           00788                 GOTO    Estado_Desactivado
+                      00789 
+021C   1825           00790                 BTFSC   Activado,0
+021D   01B8           00791                 CLRF    Usuario_Valido
+                      00792 
+021E   1825           00793                 BTFSC   Activado,0
+021F   2A77           00794                 GOTO    Estado_Desactivado
+                      00795 
+0220   1826           00796                 BTFSC   Desactivado,0
+0221   2A77           00797                 GOTO    Estado_Desactivado
+                      00798         
+0222   01B8           00799                 CLRF    Usuario_Valido
+                      00800 
+0223   285B           00801                 GOTO    Salir_Interrupcion
+                      00802 
+                      00803 ;ESTADO ACTIVADO
+0224                  00804 Estado_Activado
+0224   1425           00805                 BSF             Activado,0      
+0225   1026           00806                 BCF             Desactivado,0
+0226   1028           00807                 BCF             Disparado,0
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE 17
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0227   1027           00808                 BCF             Detectado,0
+                      00809 
+0228   1005           00810                 BCF             PORTA,RA0
+0229   1485           00811                 BSF             PORTA,RA1
+022A   1105           00812                 BCF             PORTA,RA2
+                      00813 
+022B   3073           00814                 MOVLW   's'
+022C   0099           00815                 MOVWF   TXREG
+022D   2294           00816                 CALL    Esperar_tx
+                      00817 
+022E   3030           00818                 MOVLW   '0'
+022F   0099           00819                 MOVWF   TXREG
+0230   2294           00820                 CALL    Esperar_tx
+                      00821 
+0231   3031           00822                 MOVLW   '1'
+0232   0099           00823                 MOVWF   TXREG
+0233   2294           00824                 CALL    Esperar_tx
+                      00825 
+0234   3052           00826                 MOVLW   'R'
+0235   0099           00827                 MOVWF   TXREG
+0236   2294           00828                 CALL    Esperar_tx
+                      00829 
+0237   300A           00830                 MOVLW   .10
+0238   0099           00831                 MOVWF   TXREG
+0239   2294           00832                 CALL    Esperar_tx
+                      00833 
+023A   300D           00834                 MOVLW   .13
+023B   0099           00835                 MOVWF   TXREG
+023C   2294           00836                 CALL    Esperar_tx
+                      00837 
+023D   01AB           00838                 CLRF    Valor_IN
+                      00839 
+023E   0009           00840                 RETFIE
+                      00841 
+                      00842 ;ESTADO DETECTADO
+023F                  00843 Estado_Detectado
+023F   1025           00844                 BCF             Activado,0      
+0240   1026           00845                 BCF             Desactivado,0
+0241   1028           00846                 BCF             Disparado,0
+0242   1427           00847                 BSF             Detectado,0
+                      00848 
+0243   1005           00849                 BCF             PORTA,RA0
+0244   1085           00850                 BCF             PORTA,RA1
+0245   1505           00851                 BSF             PORTA,RA2
+                      00852                 
+0246   3073           00853                 MOVLW   's'
+0247   0099           00854                 MOVWF   TXREG
+0248   2294           00855                 CALL    Esperar_tx
+                      00856 
+0249   3030           00857                 MOVLW   '0'
+024A   0099           00858                 MOVWF   TXREG
+024B   2294           00859                 CALL    Esperar_tx
+                      00860 
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE 18
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+024C   3031           00861                 MOVLW   '1'
+024D   0099           00862                 MOVWF   TXREG
+024E   2294           00863                 CALL    Esperar_tx
+                      00864 
+024F   3044           00865                 MOVLW   'D'
+0250   0099           00866                 MOVWF   TXREG
+0251   2294           00867                 CALL    Esperar_tx
+                      00868 
+0252   300A           00869                 MOVLW   .10
+0253   0099           00870                 MOVWF   TXREG
+0254   2294           00871                 CALL    Esperar_tx
+                      00872 
+0255   300D           00873                 MOVLW   .13
+0256   0099           00874                 MOVWF   TXREG
+0257   2294           00875                 CALL    Esperar_tx
+                      00876 
+0258   01AB           00877                 CLRF    Valor_IN
+                      00878 
+0259   0008           00879                 RETURN
+                      00880 
+                      00881 ;ESTADO DISPARADO
+025A                  00882 Estado_Disparado
+025A   1025           00883                 BCF             Activado,0      
+025B   1026           00884                 BCF             Desactivado,0
+025C   1428           00885                 BSF             Disparado,0
+025D   1027           00886                 BCF             Detectado,0
+                      00887 
+025E   1405           00888                 BSF             PORTA,RA0
+025F   1085           00889                 BCF             PORTA,RA1
+0260   1105           00890                 BCF             PORTA,RA2
+                      00891 
+0261   3073           00892                 MOVLW   's'
+0262   0099           00893                 MOVWF   TXREG
+0263   2294           00894                 CALL    Esperar_tx
+                      00895 
+0264   3030           00896                 MOVLW   '0'
+0265   0099           00897                 MOVWF   TXREG
+0266   2294           00898                 CALL    Esperar_tx
+                      00899 
+0267   3031           00900                 MOVLW   '1'
+0268   0099           00901                 MOVWF   TXREG
+0269   2294           00902                 CALL    Esperar_tx
+                      00903 
+026A   3046           00904                 MOVLW   'F'
+026B   0099           00905                 MOVWF   TXREG
+026C   2294           00906                 CALL    Esperar_tx
+                      00907 
+026D   300A           00908                 MOVLW   .10
+026E   0099           00909                 MOVWF   TXREG
+026F   2294           00910                 CALL    Esperar_tx
+                      00911 
+0270   300D           00912                 MOVLW   .13
+0271   0099           00913                 MOVWF   TXREG
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE 19
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0272   2294           00914                 CALL    Esperar_tx
+                      00915 
+0273   01AB           00916                 CLRF    Valor_IN
+                      00917 
+0274   180B           00918                 BTFSC   INTCON,RBIF
+0275   100B           00919                 BCF             INTCON,RBIF
+                      00920 
+0276   0009           00921                 RETFIE
+                      00922 
+                      00923 ;ESTADO Desactivado
+0277                  00924 Estado_Desactivado
+0277   1025           00925                 BCF             Activado,0      
+0278   1426           00926                 BSF             Desactivado,0
+0279   1028           00927                 BCF             Disparado,0
+027A   1027           00928                 BCF             Detectado,0
+                      00929 
+027B   1405           00930                 BSF             PORTA,RA0
+027C   1485           00931                 BSF             PORTA,RA1
+027D   1505           00932                 BSF             PORTA,RA2
+                      00933         
+027E   3073           00934                 MOVLW   's'
+027F   0099           00935                 MOVWF   TXREG
+0280   2294           00936                 CALL    Esperar_tx
+                      00937 
+0281   3030           00938                 MOVLW   '0'
+0282   0099           00939                 MOVWF   TXREG
+0283   2294           00940                 CALL    Esperar_tx
+                      00941 
+0284   3031           00942                 MOVLW   '1'
+0285   0099           00943                 MOVWF   TXREG
+0286   2294           00944                 CALL    Esperar_tx
+                      00945 
+0287   3053           00946                 MOVLW   'S'
+0288   0099           00947                 MOVWF   TXREG
+0289   2294           00948                 CALL    Esperar_tx
+                      00949 
+028A   300A           00950                 MOVLW   .10
+028B   0099           00951                 MOVWF   TXREG
+028C   2294           00952                 CALL    Esperar_tx
+                      00953 
+028D   300D           00954                 MOVLW   .13
+028E   0099           00955                 MOVWF   TXREG
+028F   2294           00956                 CALL    Esperar_tx
+                      00957 
+0290   01AB           00958                 CLRF    Valor_IN
+                      00959 
+0291   1838           00960                 BTFSC   Usuario_Valido,0
+0292   287D           00961                 GOTO    Retardo_10s
+                      00962 
+0293   0009           00963                 RETFIE
+                      00964 
+0294                  00965 Esperar_tx
+0294   1E0C           00966                 BTFSS   PIR1,TXIF
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE 20
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0295   2A94           00967                 GOTO    Esperar_tx
+                      00968                         
+0296   0008           00969                 RETURN
+                      00970 
+                      00971 ;Rutina Recepcion USART 
+0297                  00972 Recepcion_USART
+0297   081A           00973                 MOVFW   RCREG
+0298   01AC           00974                 CLRF    Dato_Recibido
+0299   07AC           00975                 ADDWF   Dato_Recibido,1
+029A   3000           00976                 MOVLW   .0
+029B   022B           00977                 SUBWF   Valor_IN,0
+029C   1903           00978                 BTFSC   STATUS,Z
+029D   2AAB           00979                 GOTO    Comprobar_c
+029E   3001           00980                 MOVLW   .1
+029F   022B           00981                 SUBWF   Valor_IN,0
+02A0   1903           00982                 BTFSC   STATUS,Z
+02A1   2AB2           00983                 GOTO    Comprobar_s
+02A2   3002           00984                 MOVLW   .2
+02A3   022B           00985                 SUBWF   Valor_IN,0
+02A4   1903           00986                 BTFSC   STATUS,Z
+02A5   2AB9           00987                 GOTO    Comprobar_0
+02A6   3003           00988                 MOVLW   .3
+02A7   022B           00989                 SUBWF   Valor_IN,0
+02A8   1903           00990                 BTFSC   STATUS,Z
+02A9   2AC0           00991                 GOTO    Comprobar_1
+02AA   2AC7           00992                 GOTO    Comprobar_Final 
+                      00993 
+02AB                  00994 Comprobar_c
+02AB   082C           00995                 MOVFW   Dato_Recibido
+02AC   022D           00996                 SUBWF   Valor_c,0
+02AD   1D03           00997                 BTFSS   STATUS,Z
+02AE   2AD0           00998                 GOTO    Salir_Comprobacion
+02AF   3001           00999                 MOVLW   .1
+02B0   00AB           01000                 MOVWF   Valor_IN
+02B1   0009           01001                 RETFIE
+                      01002 
+02B2                  01003 Comprobar_s
+02B2   082C           01004                 MOVFW   Dato_Recibido
+02B3   022E           01005                 SUBWF   Valor_s,0
+02B4   1D03           01006                 BTFSS   STATUS,Z
+02B5   2AD0           01007                 GOTO    Salir_Comprobacion
+02B6   3002           01008                 MOVLW   .2
+02B7   00AB           01009                 MOVWF   Valor_IN
+02B8   0009           01010                 RETFIE
+                      01011 
+02B9                  01012 Comprobar_0
+02B9   082C           01013                 MOVFW   Dato_Recibido
+02BA   022F           01014                 SUBWF   Valor_0,0
+02BB   1D03           01015                 BTFSS   STATUS,Z
+02BC   2AD0           01016                 GOTO    Salir_Comprobacion
+02BD   3003           01017                 MOVLW   .3
+02BE   00AB           01018                 MOVWF   Valor_IN
+02BF   0009           01019                 RETFIE
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE 21
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      01020 
+02C0                  01021 Comprobar_1
+02C0   082C           01022                 MOVFW   Dato_Recibido
+02C1   0230           01023                 SUBWF   Valor_1,0
+02C2   1D03           01024                 BTFSS   STATUS,Z
+02C3   2AD0           01025                 GOTO    Salir_Comprobacion
+02C4   3004           01026                 MOVLW   .4
+02C5   00AB           01027                 MOVWF   Valor_IN
+02C6   0009           01028                 RETFIE
+                      01029 
+02C7                  01030 Comprobar_Final
+02C7   082C           01031                 MOVFW   Dato_Recibido
+02C8   0231           01032                 SUBWF   Valor_R,0
+02C9   1903           01033                 BTFSC   STATUS,Z
+02CA   2A24           01034                 GOTO    Estado_Activado
+02CB   082C           01035                 MOVFW   Dato_Recibido
+02CC   0232           01036                 SUBWF   Valor_S,0
+02CD   1903           01037                 BTFSC   STATUS,Z
+02CE   2A77           01038                 GOTO    Estado_Desactivado
+02CF   2AD0           01039                 GOTO    Salir_Comprobacion
+                      01040 
+02D0                  01041 Salir_Comprobacion
+02D0   01AB           01042                 CLRF    Valor_IN
+02D1   0009           01043                 RETFIE  
+                      01044 
+                      01045 ;Sensor de movimiento
+02D2                  01046 Interrupcion_RB0
+02D2   1825           01047                 BTFSC   Activado,0
+02D3   2AD6           01048                 GOTO    Sensor_Detectado
+02D4   108B           01049                 BCF             INTCON,INTF
+02D5   0009           01050                 RETFIE
+                      01051 
+02D6                  01052 Sensor_Detectado
+02D6   223F           01053                 CALL    Estado_Detectado
+02D7   108B           01054                 BCF             INTCON,INTF
+02D8   206F           01055                 CALL    Retardo_15s
+02D9   0009           01056                 RETFIE
+                      01057 
+                      01058                 END
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE 22
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ACKDT                             00000005
+ACKEN                             00000004
+ACKSTAT                           00000006
+ADCON0                            0000001F
+ADCON1                            0000009F
+ADCS0                             00000006
+ADCS1                             00000007
+ADCS2                             00000006
+ADDEN                             00000003
+ADFM                              00000007
+ADIE                              00000006
+ADIF                              00000006
+ADON                              00000000
+ADRESH                            0000001E
+ADRESL                            0000009E
+Activado                          00000025
+BCLIE                             00000003
+BCLIF                             00000003
+BF                                00000000
+BRGH                              00000002
+C                                 00000000
+C1INV                             00000004
+C1OUT                             00000006
+C2INV                             00000005
+C2OUT                             00000007
+CCP1CON                           00000017
+CCP1IE                            00000002
+CCP1IF                            00000002
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCP1X                             00000005
+CCP1Y                             00000004
+CCP2CON                           0000001D
+CCP2IE                            00000000
+CCP2IF                            00000000
+CCP2M0                            00000000
+CCP2M1                            00000001
+CCP2M2                            00000002
+CCP2M3                            00000003
+CCP2X                             00000005
+CCP2Y                             00000004
+CCPR1                             00000015
+CCPR1H                            00000016
+CCPR1L                            00000015
+CCPR2                             0000001B
+CCPR2H                            0000001C
+CCPR2L                            0000001B
+CHS0                              00000003
+CHS1                              00000004
+CHS2                              00000005
+CIS                               00000003
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE 23
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+CKE                               00000006
+CKP                               00000004
+CM0                               00000000
+CM1                               00000001
+CM2                               00000002
+CMCON                             0000009C
+CMIE                              00000006
+CMIF                              00000006
+CREN                              00000004
+CSRC                              00000007
+CVR0                              00000000
+CVR1                              00000001
+CVR2                              00000002
+CVR3                              00000003
+CVRCON                            0000009D
+CVREN                             00000007
+CVROE                             00000006
+CVRR                              00000005
+Codigo_NoValido                   00000187
+Codigo_Usuario1                   000001A9
+Codigo_Usuario2                   000001DB
+Codigo_Usuario3                   000001FE
+Comprobar_0                       000002B9
+Comprobar_1                       000002C0
+Comprobar_Final                   000002C7
+Comprobar_NDato                   00000136
+Comprobar_Usuario1                00000160
+Comprobar_Usuario2                0000016D
+Comprobar_Usuario3                0000017A
+Comprobar_c                       000002AB
+Comprobar_columna0                000000A3
+Comprobar_columna1                000000A8
+Comprobar_columna2                000000AD
+Comprobar_columna3                000000B2
+Comprobar_s                       000002B2
+Cont_10s                          00000029
+Cont_15s                          0000002A
+D                                 00000005
+DATA_ADDRESS                      00000005
+DC                                00000001
+D_A                               00000005
+D_NOT_A                           00000005
+Dato0                             00000034
+Dato1                             00000035
+Dato2                             00000036
+Dato3                             00000037
+Dato_Recibido                     0000002C
+Desactivado                       00000026
+Detectado                         00000027
+Disparado                         00000028
+EEADR                             0000010D
+EEADRH                            0000010F
+EECON1                            0000018C
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE 24
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+EECON2                            0000018D
+EEDATA                            0000010C
+EEDATH                            0000010E
+EEIE                              00000004
+EEIF                              00000004
+EEPGD                             00000007
+Esperar_tx                        00000294
+Estado_Activado                   00000224
+Estado_Desactivado                00000277
+Estado_Detectado                  0000023F
+Estado_Disparado                  0000025A
+F                                 00000001
+FERR                              00000002
+FSR                               00000004
+Final                             00000130
+GCEN                              00000007
+GIE                               00000007
+GO                                00000002
+GO_DONE                           00000002
+GO_NOT_DONE                       00000002
+Guardar_dato0                     00000146
+Guardar_dato1                     00000149
+Guardar_dato2                     0000014C
+Guardar_dato3                     0000014F
+I2C_DATA                          00000005
+I2C_READ                          00000002
+I2C_START                         00000003
+I2C_STOP                          00000004
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+ISR                               00000047
+Interrupcion_RB0                  000002D2
+Interrupcion_RBIF                 0000005D
+NOT_A                             00000005
+NOT_ADDRESS                       00000005
+NOT_BO                            00000000
+NOT_BOR                           00000000
+NOT_DONE                          00000002
+NOT_PD                            00000003
+NOT_POR                           00000001
+NOT_RBPU                          00000007
+NOT_RC8                           00000006
+NOT_T1SYNC                        00000002
+NOT_TO                            00000004
+NOT_TX8                           00000006
+NOT_W                             00000002
+NOT_WRITE                         00000002
+OERR                              00000001
+OPTION_REG                        00000081
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE 25
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+P                                 00000004
+PCFG0                             00000000
+PCFG1                             00000001
+PCFG2                             00000002
+PCFG3                             00000003
+PCL                               00000002
+PCLATH                            0000000A
+PCON                              0000008E
+PEIE                              00000006
+PEN                               00000002
+PIE1                              0000008C
+PIE2                              0000008D
+PIR1                              0000000C
+PIR2                              0000000D
+PORTA                             00000005
+PORTB                             00000006
+PORTC                             00000007
+PR2                               00000092
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+R                                 00000002
+RA0                               00000000
+RA1                               00000001
+RA2                               00000002
+RA3                               00000003
+RA4                               00000004
+RA5                               00000005
+RB0                               00000000
+RB1                               00000001
+RB2                               00000002
+RB3                               00000003
+RB4                               00000004
+RB5                               00000005
+RB6                               00000006
+RB7                               00000007
+RBIE                              00000003
+RBIF                              00000000
+RC0                               00000000
+RC1                               00000001
+RC2                               00000002
+RC3                               00000003
+RC4                               00000004
+RC5                               00000005
+RC6                               00000006
+RC7                               00000007
+RC8_9                             00000006
+RC9                               00000006
+RCD8                              00000000
+RCEN                              00000003
+RCIE                              00000005
+RCIF                              00000005
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE 26
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+RCREG                             0000001A
+RCSTA                             00000018
+RD                                00000000
+READ_WRITE                        00000002
+RP0                               00000005
+RP1                               00000006
+RSEN                              00000001
+RX9                               00000006
+RX9D                              00000000
+R_NOT_W                           00000002
+R_W                               00000002
+Recepcion_USART                   00000297
+Retardo_10s                       0000007D
+Retardo_15s                       0000006F
+Rutina                            00000056
+S                                 00000003
+SEN                               00000000
+SMP                               00000007
+SPBRG                             00000099
+SPEN                              00000007
+SREN                              00000005
+SSPADD                            00000093
+SSPBUF                            00000013
+SSPCON                            00000014
+SSPCON2                           00000091
+SSPEN                             00000005
+SSPIE                             00000003
+SSPIF                             00000003
+SSPM0                             00000000
+SSPM1                             00000001
+SSPM2                             00000002
+SSPM3                             00000003
+SSPOV                             00000006
+SSPSTAT                           00000094
+STATUS                            00000003
+SYNC                              00000004
+Salir_Comprobacion                000002D0
+Salir_Interrupcion                0000005B
+Sensor_Detectado                  000002D6
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000010
+T1INSYNC                          00000002
+T1OSCEN                           00000003
+T1SYNC                            00000002
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+T2CON                             00000012
+TMR0                              00000001
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE 27
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+TMR0IE                            00000005
+TMR0IF                            00000002
+TMR1CS                            00000001
+TMR1H                             0000000F
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             0000000E
+TMR1ON                            00000000
+TMR2                              00000011
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2ON                            00000002
+TOUTPS0                           00000003
+TOUTPS1                           00000004
+TOUTPS2                           00000005
+TOUTPS3                           00000006
+TRISA                             00000085
+TRISA0                            00000000
+TRISA1                            00000001
+TRISA2                            00000002
+TRISA3                            00000003
+TRISA4                            00000004
+TRISA5                            00000005
+TRISB                             00000086
+TRISB0                            00000000
+TRISB1                            00000001
+TRISB2                            00000002
+TRISB3                            00000003
+TRISB4                            00000004
+TRISB5                            00000005
+TRISB6                            00000006
+TRISB7                            00000007
+TRISC                             00000087
+TRISC0                            00000000
+TRISC1                            00000001
+TRISC2                            00000002
+TRISC3                            00000003
+TRISC4                            00000004
+TRISC5                            00000005
+TRISC6                            00000006
+TRISC7                            00000007
+TRMT                              00000001
+TX8_9                             00000006
+TX9                               00000006
+TX9D                              00000000
+TXD8                              00000000
+TXEN                              00000005
+TXIE                              00000004
+TXIF                              00000004
+TXREG                             00000019
+TXSTA                             00000098
+Tecla_Pulsada                     00000033
+UA                                00000001
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE 28
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+Usuario_Valido                    00000038
+Validar_Codigo                    00000154
+Valor_0                           0000002F
+Valor_1                           00000030
+Valor_IN                          0000002B
+Valor_R                           00000031
+Valor_S                           00000032
+Valor_c                           0000002D
+Valor_s                           0000002E
+W                                 00000000
+WCOL                              00000007
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+_BODEN_OFF                        00003FBF
+_BODEN_ON                         00003FFF
+_CONFIG                           00002007
+_CPD_OFF                          00003FFF
+_CPD_ON                           00003EFF
+_CP_ALL                           00001FFF
+_CP_OFF                           00003FFF
+_DEBUG_OFF                        00003FFF
+_DEBUG_ON                         000037FF
+_DEVID1                           00002006
+_HS_OSC                           00003FFE
+_IDLOC0                           00002000
+_IDLOC1                           00002001
+_IDLOC2                           00002002
+_IDLOC3                           00002003
+_LP_OSC                           00003FFC
+_LVP_OFF                          00003F7F
+_LVP_ON                           00003FFF
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_WRT_1FOURTH                      00003BFF
+_WRT_256                          00003DFF
+_WRT_HALF                         000039FF
+_WRT_OFF                          00003FFF
+_XT_OSC                           00003FFD
+__16F876A                         00000001
+__DEBUG                           1
+bucle_10s                         00000081
+bucle_15s                         00000072
+columna                           00000020
+columna0                          000000CA
+columna1                          000000D7
+columna2                          000000E4
+columna3                          000000F1
+continuar                         00000096
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE 29
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+esperar_10s                       00000083
+esperar_15s                       00000074
+esperar_30ms                      0000008D
+identificar_tecla                 00000094
+incrementar_columna               00000092
+inicio                            00000005
+main                              00000046
+n_columna                         00000021
+n_fila                            00000024
+retardo_30ms                      0000008A
+tecla                             00000022
+tecla_0                           000000FE
+tecla_1                           00000101
+tecla_2                           00000104
+tecla_3                           00000107
+tecla_4                           0000010A
+tecla_5                           0000010D
+tecla_6                           00000110
+tecla_7                           00000113
+tecla_8                           00000116
+tecla_9                           00000119
+tecla_A                           0000011C
+tecla_B                           0000011F
+tecla_C                           00000122
+tecla_D                           00000125
+tecla_NOpulsada                   000000B7
+tecla_PULSADA                     000000BC
+tecla_alm                         0000012B
+tecla_ast                         00000128
+ultima_fila                       0000012E
+valor_RB                          00000023
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+0000 : X---XXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0040 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0080 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+00C0 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0100 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0140 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0180 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+01C0 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0200 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0240 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0280 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+MPASM  5.42                 PROYECTOFINAL.ASM   4-28-2020  18:28:07         PAGE 30
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+
+02C0 : XXXXXXXXXXXXXXXX XXXXXXXXXX------ ---------------- ----------------
+2000 : -------X-------- ---------------- ---------------- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:   727
+Program Memory Words Free:  7465
+
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :    32 reported,     0 suppressed
+
+

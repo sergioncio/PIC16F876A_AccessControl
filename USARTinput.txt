@@ -1,0 +1,20 @@
+wait 500 ms
+"c"
+wait 500 ms
+"s"
+wait 500 ms
+"0"
+wait 500 ms
+"1"
+wait 500 ms
+"R"
+wait 500 ms
+"c"
+wait 500 ms
+"s"
+wait 500 ms
+"0"
+wait 500 ms
+"1"
+wait 500 ms
+"S"
